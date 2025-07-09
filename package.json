@@ -1,0 +1,19 @@
+{
+  "name": "twitter-clone",
+  "version": "1.0.0",
+  "description": "A Twitter-like SNS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.7.0",
+    "node-schedule": "^2.1.1",
+    "sqlite3": "^5.0.0",
+    "xml2js": "^0.6.2"
+  },
+  "engines": {
+    "node": "14.x"
+  }
+}

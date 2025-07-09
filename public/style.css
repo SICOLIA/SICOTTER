@@ -1,0 +1,452 @@
+/* 全体の背景をTwitter風の青に */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* 横スクロールを防ぐ */
+    background-color: #d2d7da;/* #15202b */
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    background-color: #ffffff; /* 背景色を白に設定 */
+    max-width: 95%; /* 画面幅に収める */
+    margin: 20px auto; /* 中央揃え */
+    padding: 20px; /* 内側余白 */
+    border-radius: 10px; /* 角を丸く */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ボックスの影 */
+    overflow: visible !important; /* 子要素を隠さない */
+    height: auto !important; /* 高さを自動調整 */
+    display: block; /* ブロック要素として強制 */
+    box-sizing: border-box; /* パディングやボーダーを含めてサイズを計算 */
+    position: relative; /* 子要素の位置調整に対応 */
+}
+
+
+
+.tweet {
+    overflow: visible !important; /* 子要素が隠れないように */
+    height: auto !important; /* 高さを自動調整 */
+    display: block !important; /* ブロック要素として表示 */
+    padding: 10px; /* 各ツイートの余白を設定 */
+    margin: 10px 0; /* ツイート間の余白を設定 */
+    background-color: transparent; /* 背景色はそのまま */
+}
+.tweet p {
+    color: black; /* ツイートの文字色を黒に設定 */
+    display: block; /* 必ず表示されるように */
+    font-size: 16px; /* フォントサイズを適切に */
+    line-height: 1.5; /* 行間を調整 */
+}
+
+.tweet small {
+    color: gray; /* 時刻を灰色に設定 */
+    font-size: 12px; /* 小さめの文字サイズ */
+    display: inline; /* 必ず表示 */
+    margin-left: 5px; /* ユーザーネームから少し余白をつける */
+}
+
+
+
+
+}
+
+@media (max-width: 600px) {
+    .tweet {
+        font-size: 14px; /* フォントサイズを縮小 */
+        line-height: 1.5; /* 行間を調整 */
+    }
+}
+
+
+
+.header {
+  display: flex;
+  justify-content: center; /* 水平方向に中央揃え */
+  align-items: center; /* 垂直方向に中央揃え */
+  gap: 10px; /* 画像間のスペースを調整 */
+}
+
+h1 .logo-image {
+  width: 9%; /* 幅を100pxに設定 */
+  height: 9%; /* 高さを50pxに設定 */
+}
+
+.header-image {
+  width: 40%; /* 必要に応じて画像サイズを調整 */
+}
+
+body {
+  background-color: #d2d7da;/* #15202b */
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* タイトルの色をTwitter風に */
+h1 {
+  color: #1da1f2;
+  text-align: center;
+  padding: 20px 0;
+}
+
+
+/* フォームを少しコンパクトに */
+form {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+form input,
+form textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+}
+
+/* 投稿のユーザー名と内容の隙間を縮める */
+.tweet {
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.tweet strong {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.tweet p {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+/* レスポンシブデザイン: スマートフォン用 */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    margin: 10px auto;
+    padding: 15px;
+  }
+
+  form {
+    flex-direction: column;
+  }
+
+  form input,
+  form textarea,
+  form button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+/* 投稿フォームの調整: スマホでのはみ出し防止 */
+form input,
+form textarea,
+form button {
+  width: 100%; /* フォーム全体を画面幅に合わせる */
+  box-sizing: border-box; /* パディングやボーダーを含む */
+  margin-bottom: 10px;
+}
+
+/* 投稿ボタンのデザイン修正 */
+form button {
+  background-color: #1da1f2; /* タイトルロゴと同じ水色 */
+  color: white; /* 文字色は白 */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px; /* 縦を大きく */
+  cursor: pointer;
+  width: auto; /* 横幅を縮める */
+  align-self: flex-start; /* 左寄せに */
+}
+
+.post-button {
+    display: flex; /* 画像とテキストを横並びにする */
+    align-items: center; /* 縦方向の中央揃え */
+    background-color: #1da1f2; /* ボタン背景色 */
+    color: white; /* テキストの色 */
+    border: none; /* ボーダーを削除 */
+    padding: 5px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px; /* ボタンの角を丸くする */
+}
+
+.post-button:hover {
+    background-color: #1a83c3; /* ホバー時の色変更 */
+}
+
+.button-image {
+    width: 20px; /* 画像の幅を設定 */
+    height: 20px; /* 画像の高さを設定 */
+    margin-right: 8px; /* 画像とテキストの間の余白 */
+}
+
+
+form button:hover {
+  background-color: #1a91da; /* ホバー時に少し濃い色に */
+}
+.logo-image {
+  width: 40px; /* ロゴの大きさ */
+  height: auto;
+  vertical-align: bottom; /* テキストと高さを揃える */
+  margin-right: 0; /* 画像とタイトルの間の余白 */
+}
+/* タブ全体のスタイル */
+#tabs {
+  display: flex;
+  justify-content: space-around; /* 等間隔に配置 */
+  margin-bottom: 0;
+  padding: 0;
+  background-color: #0068b6; /* 背景色 *//* #15202b */
+}
+
+/* タブボタンのスタイル */
+.tab-button {
+  flex-grow: 1;
+  padding: 10px; /* タブのパディングを調整 */
+  text-align: center;
+  background-color: transparent; /* 背景色を透明に */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px; /* フォントサイズを調整 */
+  position: relative; /* 下線の位置を制御 */
+}
+
+/* 選択されたタブのスタイル */
+.tab-button.selected {
+  font-weight: bold; /* 太字に */
+  color: #1da1f2; /* 選択されたタブの文字色 */
+}
+
+/* 選択されたタブの下にラインを追加 */
+.tab-button.selected::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px; /* タブの下に位置 */
+  height: 2px; /* ラインの高さ */
+  background-color: white; /* ラインの色 */
+}
+
+/* ホバー時の色 */
+.tab-button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* ホバー時に背景色を薄く表示 */
+}
+
+#news-list a {
+  color: white; /* 文字色を白に変更 */
+  text-decoration: none; /* 下線を消す */
+  font-size: 14px;
+}
+
+#news-list a:hover {
+  color: #1da1f2; /* ホバー時に色をTwitterの水色に変更 */
+  text-decoration: underline; /* ホバー時に下線を表示 */
+}
+
+.username {
+  font-size: 12px; /* フォントサイズを変更 */
+  font-weight: 900; /* 太さを設定 */
+  color: Black; /* 文字色を設定 */
+}
+/* 既存のCSSに追加 */
+.tab-content {
+  display: none; /* デフォルトでは非表示 */
+}
+
+.tab-content#急上昇 {
+  display: block; /* 急上昇タブはデフォルトで表示 */
+}
+.checkmark-icon {
+  width: 16px; /* アイコンの幅 */
+  height: 16px; /* アイコンの高さ */
+  margin-left: 3px; /* ユーザーネームとの間隔 */
+  vertical-align: middle; /* テキストと垂直に揃える */
+  position: relative; /* relativeで位置を調整可能に */
+  top: -2px; /* 上に少し移動（調整値） */
+}
+.username {
+  cursor: pointer; /* ユーザーネームがクリックできるように */
+}
+#uploadImageBtn {
+  background-color: #1da1f2; /* 任意の色に変更できます */
+  border: none;
+  border-radius: 50%; /* 円形ボタン */
+  width: 30px; /* ボタンのサイズ */
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0; /* 余白をなくす */
+}
+
+#uploadImageBtn img {
+  width: 15px; /* 画像アイコンのサイズ */
+  height: 15px;
+}
+/* Imgurサムネイル */
+.thumbnail {
+  max-width: 150px;
+  max-height: 150px;
+  margin: 10px 0;
+  display: block;
+}
+#trendinglist {
+  list-style-type: none; /* リストアイコンを消す */
+  padding: 0; /* 左側の余白を消す */
+  margin: 0;
+}
+/* ポップアップスタイル */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 320px;
+}
+
+.popup-buttons {
+  margin-top: 10px;
+}
+#createEmojiBtn {
+  background-color: white; /* 任意の色に変更できます */
+  border: none;
+  border-radius: 50%; /* 円形ボタン */
+  width: 30px; /* ボタンのサイズ */
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0; /* 余白をなくす */
+}
+#emojiSelector {
+  font-size: 18px; /* 文字サイズを大きく */
+  padding: 10px; /* 内側の余白を広げてボタン全体を大きく */
+  width: 50%; /* ボタンの幅をポップアップ内に広げる */
+  margin-bottom: 10px; /* キャンバスとの間に余白を追加 */
+}
+/* ポップアップを画面中央に固定し、背景がスクロールしないようにする */
+/* ポップアップを画面中央に固定 */
+#emojiPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* スマホ画面幅に対応 */
+    max-width: 320px; /* 最大幅を制限 */
+    height: auto;
+    background-color: white;
+    padding: 20px;
+    box-sizing: border-box; /* パディングを含めてサイズ計算 */
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+
+
+/* キャンバススタイル */
+#emojiCanvas {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+/* 絵文字のキーボード */
+.emoji-keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.emoji-keyboard span {
+  font-size: 1.5rem;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.emoji-tab {
+  background: #f1f1f1;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.emoji-tab.selected {
+  background: #ddd;
+  font-weight: bold;
+}
+.emoji-item {
+  font-size: 10px; /* キャンバス上の絵文字と同じサイズに */
+  font-family: serif; /* キャンバスで使用しているフォントと同じものに */
+  line-height: 1;
+  color: black;
+}
+
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 10px;
+}
+.popup-content {
+    text-align: center;
+}
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+.game-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#currentProfileImage {
+    transition: transform 0.2s ease;
+}
+#currentProfileImage:hover {
+    transform: scale(1.1);
+}
+

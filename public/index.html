@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sicotter</title>
+    <link rel="stylesheet" href="style.css">
+  
+    <!-- OGP画像の設定 --><!-- ミャクミャク変更中 -->
+    <meta property="og:image" content="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/ChatGPT%20Image%202025%E5%B9%B44%E6%9C%8815%E6%97%A5%2014_32_35%20(1)%20(1)%20(1).png?v=1744697126291">
+    <meta property="og:title" content="Sicotter">
+    <meta property="og:description" content="Welcome by イークン・マラス">
+    <meta property="og:url" content="https://giddy-likeable-gigantoraptor.glitch.me/">
+
+    <!-- Favicon設定 --><!-- ミャクミャク変更中 -->
+    <link rel="icon" href="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/ChatGPT%20Image%202025%E5%B9%B44%E6%9C%8815%E6%97%A5%2014_32_35%20(1)%20(1)%20(1).png?v=1744697126291" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/ChatGPT%20Image%202025%E5%B9%B44%E6%9C%8815%E6%97%A5%2014_32_35%20(1)%20(1)%20(1).png?v=1744697126291">
+    <meta name="apple-mobile-web-app-title" content="Sicotter">
+</head>
+<body>
+    <h1 class="header"><!-- ミャクミャク変更中 -->
+        <img src="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/ChatGPT%20Image%202025%E5%B9%B44%E6%9C%8815%E6%97%A5%2014_32_35%20(1)%20(1)%20(1).png?v=1744697126291" alt="Logo" class="logo-image">
+        <img src="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/Sicotter-2024-12-4%20(1).png?v=1744699961189" alt="Sicotter Logo" class="header-image">
+    </h1>
+
+<div id="tabs">
+    <button class="tab-button" onclick="showTab('sikopa')">シコパ</button>
+    <button class="tab-button" onclick="showTab('trending')">急上昇</button>
+    <button class="tab-button" onclick="showTab('news')">ニュース</button>
+</div>
+
+<div id="content">
+<div id="sikopa" class="tab-content" style="display: none; text-align: center;">
+        <a href="https://chalk-shared-yttrium.glitch.me/" target="_blank">
+            <img src="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/5604cead587b5be0a44b3385aea0e9b4_t.png?v=1741593888487" 
+                 alt="シコパ 無料版" style="width: 100px; cursor: pointer;">
+        </a>
+  <p class="description">安心！安全！</p>
+  <p class="description">シコパ無料版はこちら！</p>
+  <p class="description">クリックしてアクセス！</p>
+    </div>
+
+    <div id="news" class="tab-content" style="display: none;">
+        <h3>最新ニュース</h3>
+        <ul id="news-list"></ul>
+    </div>
+  　<div id="trending" class="tab-content" style="display: none;"> <!-- 新しいコンテンツエリア -->
+        <h3>急上昇ワード</h3>
+        <ul id="trending-list"></ul>
+    </div>
+
+    <div class="container">
+        <form id="tweetForm">
+            <input type="text" id="username" placeholder="名前" required>
+            <textarea id="tweetContent" placeholder="いまどうしてる？" required></textarea>
+            <div style="display: flex; align-items: center;">
+              <button type="submit" class="post-button">
+              <img src="https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/png-transparent-bird-tweet-twitter-twitter-logo-social-media-icon-thumbnail%20(1)%20(1).png?v=1733720255864" alt="投稿アイコン" class="button-image">
+                チンポスト
+            </button>
+              
+<form id="tweetForm">
+    <div style="display: flex; align-items: center;">
+        <img id="profileImagePreview" src="default-profile.png" alt="プロフィール画像" 
+            style="width: 50px; height: 50px; border-radius: 50%; cursor: pointer;">
+        <input type="file" id="profileImageUpload" style="display: none;">
+    </div>
+</form>
+
+              
+                <button type="button" id="uploadImageBtn" style="margin-left: 10px;"><img src="https://cdn.glitch.global/40be7ca0-ea83-4c71-aa4a-c2d5089b18a9/istockphoto-688550958-612x612.png?v=1730074855703" alt="カメラアイコン"></button>
+                <!-- カスタム絵文字作成ボタン -->
+<button type="button" id="createEmojiBtn" style="margin-left: 10px;"><img src="https://cdn.glitch.global/40be7ca0-ea83-4c71-aa4a-c2d5089b18a9/2933c4af7f5d222a2e52a73b9733bb0f_640px.png?v=1730176390648" alt="絵文字アイコン"></button>
+            </div>
+            <input type="file" id="imageUpload" style="display: none;">
+        </form>
+        <div id="timeline"></div>
+    </div>
+  
+
+
+<!-- ポップアップの構造 -->
+<!-- 絵文字のポップアップ構造 -->
+<div id="emojiPopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <canvas id="emojiCanvas" width="300" height="300"></canvas>
+        
+        <!-- 絵文字のカテゴリタブ -->
+        <div id="emojiTabs">
+            <button class="emoji-tab" data-category="faces">顔</button>
+            <button class="emoji-tab" data-category="symbols">記号</button>
+            <button class="emoji-tab" data-category="animals">自然</button>
+          <button class="emoji-tab" data-category="build">建物</button>
+          <button class="emoji-tab" data-category="etc">その他</button>
+          <button class="emoji-tab" data-category="moji">もじ</button>
+        </div>
+
+        <!-- 絵文字リスト -->
+        <div id="emojiKeyboard" class="emoji-keyboard"></div>
+        
+        <div class="popup-buttons">
+            <button id="clearCanvasBtn">クリア</button>
+            <button id="emojiCompleteBtn">完了</button>
+            <button id="emojiCancelBtn">キャンセル</button>
+        </div>
+    </div>
+</div>
+
+  <script>
+document.getElementById("clearCanvasBtn").addEventListener("click", function() {
+    const canvas = document.getElementById("emojiCanvas");
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+});
+</script>
+
+    <script src="script.js"></script>
+    <div id="tweetDisplay"></div>
+</body>
+</html>
