@@ -459,3 +459,66 @@ iframe {
     transform: scale(1.1);
 }
 
+/* ==== 通話タブ用のビデオ表示エリア ==== */
+#video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  justify-items: center;
+  margin-top: 20px;
+}
+
+/* 各ビデオコンテナのスタイル（最大4人） */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 4 / 3;
+  background-color: black;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 映像本体 */
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ユーザー名のラベル */
+.username-label {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 通話操作ボタン */
+.call-button {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.call-button:hover {
+  background-color: #1681c2;
+}
+
+/* 音声モードのチェックボックス */
+#audioOnlyToggle {
+  margin-top: 10px;
+  cursor: pointer;
+}
+
