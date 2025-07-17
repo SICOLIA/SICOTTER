@@ -37,20 +37,36 @@
 
 
 <div id="content">
-<div id="sikopa" class="tab-content" style="display: none; text-align: center; padding: 20px;">
-  <p class="description">◇最大4人で映像通話ができます◇</p>
+  <div id="sikopa" class="tab-content" style="display: none; text-align: center; padding: 20px;">
+    <!-- 「通話機能開発中」などの文言は削除 or コメントアウトしてOK -->
+    <!-- <p class="description">通話機能開発中</p>
+    <p class="description">◇最大4人で会話ができます◇</p> -->
 
-  <!-- 通話ボタン -->
-  <div id="call-controls" style="margin-top: 20px;">
-    <button id="startCallBtn" class="call-button">📞 通話を開始（ホスト）</button>
-    <button id="joinCallBtn" class="call-button">👂 通話に参加</button>
-    <button id="leaveCallBtn" class="call-button" style="display: none;">❌ 通話を退出</button>
-  </div>
+    <div id="call-controls" style="margin-top: 20px;">
+      <button id="boineBtn" class="call-button" style="
+        background-color: #00c300;
+        color: white;
+        font-size: 1.2rem;
+        padding: 0.8em 2em;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      ">
+        BoINE
+      </button>
+    </div>
 
-  <!-- 通話ステータス表示 -->
-  <div id="call-status" style="margin-top: 15px; font-weight: bold; color: #333;">
-    通話していません
+
   </div>
+</div>
+
+<script>
+  document.getElementById("boineBtn").addEventListener("click", () => {
+    window.location.href = "https://junkpowerup.github.io/ogaZOOM/";
+  });
+</script>
+
 
   <!-- 音声モード切替 -->
   <div style="margin-top: 10px;">
