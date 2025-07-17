@@ -244,7 +244,6 @@ app.get('/api/user-post-count', async (req, res) => {
 
 // サーバー起動
 const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server + WebRTC socket running on port ${port}`);
+app.listen(port, () => {
+  console.log(Server running on port ${port});
 });
-
