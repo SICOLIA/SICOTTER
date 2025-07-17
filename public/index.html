@@ -38,17 +38,31 @@
 
 <div id="content">
 <div id="sikopa" class="tab-content" style="display: none; text-align: center; padding: 20px;">
-    <p class="description">通話機能開発中</p>
-  <p class="description">◇最大4人で会話ができます◇</p>
+  <p class="description">◇最大4人で映像通話ができます◇</p>
 
+  <!-- 通話ボタン -->
   <div id="call-controls" style="margin-top: 20px;">
-    <button id="startCallBtn" class="call-button">📞 通話を開始</button>
+    <button id="startCallBtn" class="call-button">📞 通話を開始（ホスト）</button>
     <button id="joinCallBtn" class="call-button">👂 通話に参加</button>
     <button id="leaveCallBtn" class="call-button" style="display: none;">❌ 通話を退出</button>
   </div>
 
+  <!-- 通話ステータス表示 -->
   <div id="call-status" style="margin-top: 15px; font-weight: bold; color: #333;">
     通話していません
+  </div>
+
+  <!-- 音声モード切替 -->
+  <div style="margin-top: 10px;">
+    <label>
+      <input type="checkbox" id="audioOnlyToggle">
+      音声モードで参加する（映像なし）
+    </label>
+  </div>
+
+  <!-- 映像表示エリア（最大4人） -->
+  <div id="video-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; justify-items: center;">
+    <!-- 動的に映像がここに追加されます -->
   </div>
 </div>
 
