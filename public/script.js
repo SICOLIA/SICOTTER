@@ -14,7 +14,7 @@ document.getElementById('profileImageUpload').addEventListener('change', functio
 
         fetch('https://api.imgur.com/3/image', {
             method: 'POST',
-            headers: { Authorization: `Client-ID ${IMGUR_CLIENT_ID}` },
+            headers: { Authorization: Client-ID ${IMGUR_CLIENT_ID} },
             body: formData
         })
         .then(response => response.json())
@@ -118,7 +118,7 @@ if (tweet.username === 'しこりくん' || tweet.username === 'しょんべん�
 }
 
 
-tweetElement.innerHTML = `
+tweetElement.innerHTML = 
     <div class="tweet-header" style="display: flex; align-items: center; margin-bottom: 10px;">
         <img src="${tweet.profileImage || 'https://cdn.glitch.global/3b848cc8-5c7c-4ec0-a4e0-3be50b6e7d71/default_profile_400x400_l.jpg?v=1733292762380'}" 
             alt="プロフィール画像" 
@@ -131,7 +131,7 @@ tweetElement.innerHTML = `
         <small style="color: #888; margin-left: 5px;">${timeAgo}</small>
     </div>
     <p>${tweetContentWithLinks}</p>
-`;
+;
 
 
                 const usernameElement = tweetElement.querySelector('.username');
@@ -139,7 +139,7 @@ tweetElement.innerHTML = `
                 usernameElement.addEventListener('click', function () {
                     const username = tweet.username;
                     const tweetContent = document.getElementById('tweetContent');
-                    tweetContent.value = `＠${username}`;
+                    tweetContent.value = ＠${username};
                 });
 
                 timeline.appendChild(tweetElement);
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
             fetch('https://api.imgur.com/3/image', {
                 method: 'POST',
                 headers: {
-                    Authorization: `Client-ID ${IMGUR_CLIENT_ID}`
+                    Authorization: Client-ID ${IMGUR_CLIENT_ID}
                 },
                 body: formData
             })
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data.success) {
                     const imageUrl = data.data.link;
-                    document.getElementById('tweetContent').value += `\n${imageUrl}`;
+                    document.getElementById('tweetContent').value += \n${imageUrl};
                 }
             })
             .catch(error => console.error('画像のアップロードに失敗しました: ', error));
@@ -202,11 +202,11 @@ function calculateTimeAgo(timestamp) {
     const tweetTime = new Date(timestamp);
     const diff = now - tweetTime;
     const minutes = Math.floor(diff / 1000 / 60);
-    if (minutes < 60) return `${minutes}分前`;
+    if (minutes < 60) return ${minutes}分前;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}時間前`;
+    if (hours < 24) return ${hours}時間前;
     const days = Math.floor(hours / 24);
-    return `${days}日前`;
+    return ${days}日前;
 }
 
 function convertToLinks(text) {
@@ -214,35 +214,35 @@ function convertToLinks(text) {
     return text.replace(urlPattern, (url) => {
         if (url.includes('imgur.com')) {
             // Imgurリンクはサムネイル画像として表示
-            return `<img src="${url}" class="thumbnail" alt="Imgur Image" loading="lazy" />`;
+            return <img src="${url}" class="thumbnail" alt="Imgur Image" loading="lazy" />;
         } else if (url.includes('youtube.com/watch') || url.includes('youtu.be/')) {
             // YouTubeリンクを埋め込み動画として表示
             const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
             if (videoId) {
-                return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                return <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>;
             }
           } else if (url.includes('youtube.com/shorts') || url.includes('youtu.be/')) {
     // YouTubeリンクを埋め込み動画として表示
     const videoId = url.match(/(?:youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
     if (videoId) {
-        return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        return <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>;
     }          
         } else if (url.includes('nicovideo.jp/watch')) {
             // ニコニコ動画リンクを埋め込み動画として表示
             const videoId = url.match(/nicovideo\.jp\/watch\/(sm[0-9]+)/);
             if (videoId) {
-                return `<iframe width="560" height="315" src="https://embed.nicovideo.jp/watch/${videoId[1]}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                return <iframe width="560" height="315" src="https://embed.nicovideo.jp/watch/${videoId[1]}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>;
             }
         } else if (url.includes('playemulator.io')) {
             // PlayEmulatorリンクを埋め込みとして表示
-            return `<iframe width="800" height="600" src="${url}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            return <iframe width="800" height="600" src="${url}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>;
         } else if (url.includes('scratch.mit.edu/projects/')) {
             // Scratchリンクをiframeで埋め込み表示
             const projectId = url.match(/projects\/(\d+)/)[1];
-            return `<iframe src="https://scratch.mit.edu/projects/${projectId}/embed" allowfullscreen style="width: 485px; height: 402px; border: none;"></iframe>`;
+            return <iframe src="https://scratch.mit.edu/projects/${projectId}/embed" allowfullscreen style="width: 485px; height: 402px; border: none;"></iframe>;
         }
         // その他のリンクはリンクテキストのみ表示
-        return `<a href="${url}" target="_blank">${url}</a>`;
+        return <a href="${url}" target="_blank">${url}</a>;
     });
 }
 
@@ -306,7 +306,7 @@ switch (index + 1) {
         backgroundColor = '#FFFFFF'; // デフォルト（必要に応じて）
 }
 
-listItem.innerHTML = `<span style="display: inline-block; width: 20px; height: 20px; background-color: ${backgroundColor}; color: white; border-radius: 3px; text-align: center; font-weight: bold; margin-right: 5px;">${index + 1}</span> ${hashtag.hashtag}　<span style="font-size: 10px; font-weight: medium;">${hashtag.count}件のタグ</span>`;
+listItem.innerHTML = <span style="display: inline-block; width: 20px; height: 20px; background-color: ${backgroundColor}; color: white; border-radius: 3px; text-align: center; font-weight: bold; margin-right: 5px;">${index + 1}</span> ${hashtag.hashtag}　<span style="font-size: 10px; font-weight: medium;">${hashtag.count}件のタグ</span>;
 
                 trendingList.appendChild(listItem);
             });
@@ -565,7 +565,7 @@ emojiCompleteBtn.addEventListener('click', () => {
     fetch('https://api.imgur.com/3/image', {
         method: 'POST',
         headers: {
-            Authorization: `Client-ID ${IMGUR_CLIENT_ID}`
+            Authorization: Client-ID ${IMGUR_CLIENT_ID}
         },
         body: dataURL.split(',')[1]
     })
@@ -573,7 +573,7 @@ emojiCompleteBtn.addEventListener('click', () => {
     .then(data => {
         if (data.success) {
             const imageUrl = data.data.link;
-            document.getElementById('tweetContent').value += `\n${imageUrl}`;
+            document.getElementById('tweetContent').value += \n${imageUrl};
             emojiPopup.style.display = 'none';
             ctx.clearRect(0, 0, emojiCanvas.width, emojiCanvas.height); // アップロード後にキャンバスをクリア
             emojiPositions = []; // 配列もクリア
