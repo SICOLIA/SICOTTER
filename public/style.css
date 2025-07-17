@@ -209,15 +209,24 @@ form button:hover {
 /* タブボタンのスタイル */
 .tab-button {
   flex-grow: 1;
-  padding: 10px; /* タブのパディングを調整 */
+  padding: 10px;
   text-align: center;
-  background-color: transparent; /* 背景色を透明に */
-  color: white;
+  background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 14px; /* フォントサイズを調整 */
-  position: relative; /* 下線の位置を制御 */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+/* タブ内の画像アイコン */
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
 
 /* 選択されたタブのスタイル */
 .tab-button.selected {
