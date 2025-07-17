@@ -4,7 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* 横スクロールを防ぐ */
-    background-color: #d2d7da;/* #15202b */
+    background-color: #15202b;/* #15202b */
     color: white;
     font-family: Arial, sans-serif;
 }
