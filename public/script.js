@@ -581,3 +581,176 @@ emojiCompleteBtn.addEventListener('click', () => {
     })
     .catch(error => console.error('画像のアップロードに失敗しました: ', error));
 });
+
+const socket = io();
+const videoGrid = document.getElementById('video-grid');
+const joinCallBtn = document.getElementById('joinCallBtn');
+const leaveCallBtn = document.getElementById('leaveCallBtn');
+const usernameInput = document.getElementById('usernameInput');
+const audioOnlyToggle = document.getElementById('audioOnlyToggle');
+
+const peers = {};
+let localStream;
+let myName;
+let joined = false;
+let autoLeaveTimer;
+
+const ROOM_ID = "main"; // 固定ルーム（1つだけ）
+
+joinCallBtn.onclick = async () => {
+  myName = usernameInput.value.trim();
+
+  if (!myName) {
+    alert("ユーザー名を入力してください。");
+    return;
+  }
+
+  socket.emit("check-duplicate", myName, (isDuplicate) => {
+    if (isDuplicate) {
+      alert("そのユーザー名はすでに使われています。");
+    } else {
+      joinCall();
+    }
+  });
+};
+
+leaveCallBtn.onclick = () => {
+  leaveCall();
+};
+
+function createVideoElement(stream, username) {
+  const container = document.createElement("div");
+  container.className = "video-container";
+
+  const video = document.createElement("video");
+  video.srcObject = stream;
+  video.autoplay = true;
+  video.playsInline = true;
+  if (username === myName) video.muted = true;
+
+  const label = document.createElement("div");
+  label.className = "username-label";
+  label.textContent = username;
+
+  container.appendChild(video);
+  container.appendChild(label);
+  videoGrid.appendChild(container);
+}
+
+async function joinCall() {
+  joined = true;
+  joinCallBtn.disabled = true;
+  leaveCallBtn.disabled = false;
+  usernameInput.disabled = true;
+
+  const audioOnly = audioOnlyToggle.checked;
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: !audioOnly,
+      audio: true,
+    });
+  } catch (err) {
+    alert("カメラ/マイクへのアクセスを許可してください。");
+    return;
+  }
+
+  createVideoElement(localStream, myName);
+  socket.emit("join-room", ROOM_ID, myName);
+
+  autoLeaveTimer = setTimeout(() => {
+    alert("通話は30分で終了します。");
+    leaveCall();
+  }, 30 * 60 * 1000);
+}
+
+function leaveCall() {
+  joined = false;
+  joinCallBtn.disabled = false;
+  leaveCallBtn.disabled = true;
+  usernameInput.disabled = false;
+
+  clearTimeout(autoLeaveTimer);
+  for (let id in peers) {
+    peers[id].close();
+  }
+
+  peers = {};
+  videoGrid.innerHTML = "";
+  socket.emit("leave-room", ROOM_ID, myName);
+
+  if (localStream) {
+    localStream.getTracks().forEach(track => track.stop());
+  }
+}
+
+// ========== 20250717ソケットイベント ==========
+socket.on("user-connected", (userId, username) => {
+  if (!joined) return;
+
+  const peer = new RTCPeerConnection();
+  peers[userId] = peer;
+
+  localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+
+  peer.ontrack = (event) => {
+    const remoteStream = new MediaStream(event.streams[0].getTracks());
+    createVideoElement(remoteStream, username);
+  };
+
+  peer.onicecandidate = (e) => {
+    if (e.candidate) {
+      socket.emit("ice-candidate", userId, e.candidate);
+    }
+  };
+
+  peer.onconnectionstatechange = () => {
+    if (peer.connectionState === "disconnected") {
+      delete peers[userId];
+    }
+  };
+
+  peer.createOffer().then(offer => {
+    peer.setLocalDescription(offer);
+    socket.emit("offer", userId, offer, myName);
+  });
+});
+
+socket.on("offer", async (fromId, offer, fromUsername) => {
+  const peer = new RTCPeerConnection();
+  peers[fromId] = peer;
+
+  localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+
+  peer.ontrack = (event) => {
+    const remoteStream = new MediaStream(event.streams[0].getTracks());
+    createVideoElement(remoteStream, fromUsername);
+  };
+
+  peer.onicecandidate = (e) => {
+    if (e.candidate) {
+      socket.emit("ice-candidate", fromId, e.candidate);
+    }
+  };
+
+  await peer.setRemoteDescription(offer);
+  const answer = await peer.createAnswer();
+  await peer.setLocalDescription(answer);
+  socket.emit("answer", fromId, answer);
+});
+
+socket.on("answer", (fromId, answer) => {
+  peers[fromId].setRemoteDescription(answer);
+});
+
+socket.on("ice-candidate", (fromId, candidate) => {
+  peers[fromId].addIceCandidate(candidate);
+});
+
+socket.on("user-disconnected", (userId) => {
+  if (peers[userId]) {
+    peers[userId].close();
+    delete peers[userId];
+  }
+});
+// ========== 20250717ソケットイベント終わり ==========
