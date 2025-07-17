@@ -251,8 +251,8 @@ form button:hover {
 }
 
 #news-list a {
-  color: white; /* 文字色を白に変更 */
-  text-decoration: none; /* 下線を消す */
+  color: #333333; /* 濃い目のグレー */
+  text-decoration: none;
   font-size: 14px;
 }
 
