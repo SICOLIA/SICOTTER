@@ -242,69 +242,6 @@ app.get('/api/user-post-count', async (req, res) => {
   }
 });
 
-// Socket.io用のHTTPサーバーを作成　20250717
-const http = require('http');
-const { Server } = require('socket.io');
-const server = http.createServer(app);
-const io = new Server(server);
-
-// 1ルームのみ運用
-const ROOM_NAME = "mainRoom";
-const connectedUsers = new Map();
-
-io.on('connection', (socket) => {
-  console.log('ユーザー接続:', socket.id);
-
-  socket.on('join', ({ username }) => {
-    if (!username || connectedUsers.has(username)) {
-      socket.emit('join-error', 'ユーザー名が無効、またはすでに参加中です。');
-      return;
-    }
-
-    // 最大4人制限
-    if (connectedUsers.size >= 4) {
-      socket.emit('join-error', '通話は最大4人までです。');
-      return;
-    }
-
-    connectedUsers.set(username, socket.id);
-    socket.username = username;
-    socket.join(ROOM_NAME);
-
-    // 参加通知・ユーザー一覧送信
-    io.to(ROOM_NAME).emit('user-list', Array.from(connectedUsers.keys()));
-    socket.broadcast.to(ROOM_NAME).emit('user-joined', username);
-
-    console.log(`ユーザー ${username} が通話に参加しました`);
-  });
-
-  socket.on('signal', ({ to, from, data }) => {
-    const targetSocketId = connectedUsers.get(to);
-    if (targetSocketId) {
-      io.to(targetSocketId).emit('signal', { from, data });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    if (socket.username) {
-      connectedUsers.delete(socket.username);
-      socket.broadcast.to(ROOM_NAME).emit('user-left', socket.username);
-      io.to(ROOM_NAME).emit('user-list', Array.from(connectedUsers.keys()));
-      console.log(`ユーザー ${socket.username} が通話から離脱しました`);
-    }
-  });
-});
-
-// ⏰ 自動通話終了（30分タイマー）
-setInterval(() => {
-  if (connectedUsers.size > 0) {
-    io.to(ROOM_NAME).emit('call-ended', '30分経過のため自動終了しました。');
-    connectedUsers.clear();
-  }
-}, 30 * 60 * 1000); // 30分
-
-// Socket.io用のHTTPサーバーを作成　20250717終わり
-
 // サーバー起動
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
