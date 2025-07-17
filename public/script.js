@@ -1,6 +1,7 @@
 // ImgurのクライアントID
 const IMGUR_CLIENT_ID = 'e484a9032da395e';  // あなたのImgurクライアントIDに置き換えてください
 
+
 // サムネプレビューを画像選択ボタンとして機能させる
 document.getElementById('profileImagePreview').addEventListener('click', () => {
     document.getElementById('profileImageUpload').click();
