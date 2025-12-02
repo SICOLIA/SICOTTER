@@ -24,9 +24,12 @@ const tweetSchema = new mongoose.Schema({
 });
 const Tweet = mongoose.model('Tweet', tweetSchema);
 
-// AI応答関数
+// AI応答関数（Groq対応）
 async function getAIResponse(text, persona = 'しこりくん') {
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+  };
 
   const personas = {
     'しこりくん': `あなたは非常に知的で低姿勢の、しこりくんです。次のメッセージに対して論理的で自然な日本語で、時折絵文字やユーモアを交えながら、絶対にこちらへ質問することなく、具体的かつ適切な回答を必ず提示し、なるべく簡潔に、適切に改行を入れながら読みやすく応答してください。\nユーザーのメッセージ:「${text}」\nしこりくんの応答:`,
@@ -36,15 +39,14 @@ async function getAIResponse(text, persona = 'しこりくん') {
   const prompt = personas[persona] || personas['しこりくん'];
 
   const body = JSON.stringify({
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
+    model: "llama-3.3-70b-versatile",  // ← Groq推奨モデル
+    messages: [
+      { role: "user", content: prompt }
     ]
   });
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers,
       body,
@@ -52,27 +54,19 @@ async function getAIResponse(text, persona = 'しこりくん') {
 
     const data = await response.json();
 
-    // 新形式に対応（content が配列）
-    if (
-      data &&
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content[0] &&
-      data.candidates[0].content[0].parts &&
-      data.candidates[0].content[0].parts[0]
-    ) {
-      return data.candidates[0].content[0].parts[0].text.trim();
+    if (data && data.choices && data.choices[0] && data.choices[0].message) {
+      return data.choices[0].message.content.trim();
     }
 
-    console.error("Gemini API応答エラー:", data);
+    console.error("Groq API応答エラー:", data);
     return "応答を生成できませんでした。";
 
   } catch (error) {
-    console.error("Gemini APIエラー:", error);
+    console.error("Groq APIエラー:", error);
     return "エラーが発生しました。";
   }
 }
+
 
 
 // ミドルウェア
