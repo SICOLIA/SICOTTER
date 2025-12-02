@@ -8,7 +8,7 @@ require('dotenv').config();
 
 // Google Gemini AI API設定
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // 環境変数から取得
-const GEMINI_API_URL ="https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+const GEMINI_API_URL ="https://api.groq.com/openai/v1/chat/completions";
 
 // MongoDB接続
 mongoose.connect(process.env.MONGODB_URI)
