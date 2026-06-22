@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DikTok</title>
+<style>
+  :root{
+    --bg:#0E0E10;
+    --bg-soft:#17171A;
+    --line:#26262B;
+    --text:#F5F5F5;
+    --text-dim:#9A9A9F;
+    --pink:#FE2C55;
+    --cyan:#25F4EE;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+    min-height:100vh;
+  }
+
+  .wrap{
+    max-width:880px;
+    margin:0 auto;
+    padding:56px 20px 80px;
+  }
+
+  /* ---- header ---- */
+  header{
+    margin-bottom:40px;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.16em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+    margin:0 0 8px;
+    line-height:1.15;
+  }
+  h1 span{
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .lead{
+    color:var(--text-dim);
+    font-size:15px;
+    margin:0;
+    max-width:520px;
+    line-height:1.6;
+  }
+
+  /* ---- form ---- */
+  .panel{
+    background:var(--bg-soft);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px;
+    margin-bottom:28px;
+  }
+  .panel h2{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--text-dim);
+    margin:0 0 16px;
+    font-weight:700;
+  }
+
+  .field-row{
+    display:flex;
+    gap:10px;
+  }
+  .at-input{
+    position:relative;
+    flex:1;
+    display:flex;
+    align-items:center;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:0 14px;
+    transition:box-shadow .2s, border-color .2s;
+  }
+  .at-input .at{
+    color:var(--text-dim);
+    font-weight:700;
+    margin-right:2px;
+  }
+  .at-input input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--text);
+    font-size:16px;
+    padding:13px 0;
+  }
+  .at-input input::placeholder{color:#5b5b60;}
+
+  .at-input:focus-within{
+    border-color:transparent;
+    box-shadow:
+      0 0 0 1px var(--cyan),
+      0 0 0 3px rgba(37,244,238,0.15),
+      4px 0 14px -4px var(--pink);
+  }
+
+  button{
+    border:none;
+    border-radius:10px;
+    padding:0 22px;
+    font-size:15px;
+    font-weight:700;
+    color:#0E0E10;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    cursor:pointer;
+    transition:transform .15s, opacity .15s;
+  }
+  button:hover{opacity:.92;}
+  button:active{transform:scale(.97);}
+
+  .hint{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin:10px 2px 0;
+  }
+  .error{
+    font-size:13px;
+    color:var(--pink);
+    margin:10px 2px 0;
+    display:none;
+  }
+
+  /* ---- profile section ---- */
+  .profile-shell{
+    margin-bottom:8px;
+  }
+  .profile-meta{
+    display:flex;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .profile-meta .handle{
+    font-size:18px;
+    font-weight:800;
+  }
+  .profile-meta .handle .at{color:var(--text-dim);font-weight:600;}
+
+  .tabs{
+    display:flex;
+    gap:4px;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--line);
+  }
+  .tab{
+    background:transparent;
+    color:var(--text-dim);
+    border:none;
+    border-radius:0;
+    padding:10px 4px;
+    margin-right:20px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{
+    color:var(--text);
+    border-bottom:2px solid var(--pink);
+  }
+  .tab:hover:not(.active){color:var(--text);}
+
+  .embed-frame{
+    background:var(--bg-soft);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .embed-frame.empty{
+    padding:40px 20px;
+    color:var(--text-dim);
+    font-size:14px;
+    text-align:center;
+  }
+
+  /* TikTok embed.js produces a blockquote that becomes an iframe.
+     Force it to fill width nicely. */
+  .embed-frame .tiktok-embed{
+    margin:0 auto !important;
+    width:100% !important;
+    max-width:720px !important;
+  }
+
+  /* "videos" tab reuses the same creator-embed iframe. TikTok's
+     creator embed already lists the account's recent videos below
+     the bio, so we just give the frame enough height to show them;
+     visitors can scroll within the embed itself. */
+  .embed-frame.videos-focus{
+    min-height:640px;
+    align-items:flex-start;
+  }
+
+  footer{
+    margin-top:60px;
+    color:#5b5b60;
+    font-size:12px;
+    text-align:center;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+  }
+
+  @media (max-width:520px){
+    h1{font-size:26px;}
+    .field-row{flex-direction:column;}
+    button{padding:13px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">TikTok Local Viewer</p>
+    <h1>Dik<span>Tok</span></h1>
+    <p class="lead">アカウント名（@から始まるユーザー名）を入力すると、プロフィールと最新動画を見ることができます。</p>
+  </header>
+
+  <div class="panel">
+    <h2>アカウントを表示</h2>
+    <form id="profile-form">
+      <div class="field-row">
+        <div class="at-input">
+          <span class="at">@</span>
+          <input type="text" id="handle-input" placeholder="testA" autocomplete="off" inputmode="latin">
+        </div>
+        <button type="submit">表示する</button>
+      </div>
+      <p class="error" id="profile-error">アカウント名を入力してください。</p>
+    </form>
+  </div>
+
+  <div class="profile-shell">
+    <div class="profile-meta" id="profile-meta" style="display:none;">
+      <div class="handle"><span class="at">@</span><span id="meta-handle"></span></div>
+    </div>
+
+    <div class="tabs" id="tabs" style="display:none;">
+      <button type="button" class="tab active" data-tab="profile">プロフィール</button>
+      <button type="button" class="tab" data-tab="videos">動画</button>
+    </div>
+
+    <div class="tab-panel" id="panel-profile">
+      <div class="embed-frame empty" id="profile-frame">
+        まだアカウントが指定されていません。上の入力欄に @アカウント名 を入れて「表示する」を押してください。
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-videos" style="display:none;">
+      <div class="embed-frame empty" id="videos-frame">
+        アカウントを表示すると、ここにそのアカウントの動画一覧が表示されます（枠内でスクロールできます）。
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    TikTok公式の埋め込み（oEmbed / embed.js）を利用しています。非公開アカウントや年齢制限のあるアカウント・動画は表示できません。
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const profileForm   = document.getElementById('profile-form');
+  const handleInput   = document.getElementById('handle-input');
+  const profileError  = document.getElementById('profile-error');
+  const profileFrame  = document.getElementById('profile-frame');
+  const videosFrame   = document.getElementById('videos-frame');
+  const profileMeta   = document.getElementById('profile-meta');
+  const metaHandle    = document.getElementById('meta-handle');
+  const tabs          = document.getElementById('tabs');
+  const tabButtons    = tabs.querySelectorAll('.tab');
+  const panelProfile  = document.getElementById('panel-profile');
+  const panelVideos   = document.getElementById('panel-videos');
+
+  // TikTok's embed.js scans the DOM once on load, then again whenever
+  // window.tiktokEmbedLoad() is called (it's exposed by their script
+  // for late-inserted blockquotes).
+  function reloadTiktokEmbeds(){
+    if (window.tiktokEmbedLoad) {
+      try { window.tiktokEmbedLoad(); } catch(e) { /* no-op */ }
+    }
+  }
+
+  function loadEmbedScriptOnce(){
+    if (document.getElementById('tiktok-embed-script')) {
+      reloadTiktokEmbeds();
+      return;
+    }
+    const s = document.createElement('script');
+    s.id = 'tiktok-embed-script';
+    s.async = true;
+    s.src = 'https://www.tiktok.com/embed.js';
+    document.body.appendChild(s);
+  }
+
+  // Extracts a clean handle (no @, no url) from free-form input.
+  function extractHandle(raw){
+    if (!raw) return null;
+    let v = raw.trim();
+    // full URL like https://www.tiktok.com/@testA or with trailing path
+    const urlMatch = v.match(/tiktok\.com\/@([a-zA-Z0-9_.]+)/i);
+    if (urlMatch) return urlMatch[1];
+    // plain "@testA" or "testA"
+    v = v.replace(/^@/, '');
+    if (/^[a-zA-Z0-9_.]{1,24}$/.test(v)) return v;
+    return null;
+  }
+
+  function creatorEmbedHtml(handle){
+    return '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@' + handle + '" ' +
+      'data-unique-id="' + handle + '" data-embed-type="creator" ' +
+      'style="max-width: 720px; min-width: 288px;">' +
+      '<section></section>' +
+      '</blockquote>';
+  }
+
+  function renderProfile(handle){
+    profileMeta.style.display = 'flex';
+    metaHandle.textContent = handle;
+    tabs.style.display = 'flex';
+
+    // Profile tab: full creator embed (bio + recent videos).
+    profileFrame.classList.remove('empty');
+    profileFrame.innerHTML = creatorEmbedHtml(handle);
+
+    // Videos tab: same creator embed (TikTok's creator embed already
+    // includes the account's recent videos below the bio).
+    videosFrame.classList.remove('empty');
+    videosFrame.classList.add('videos-focus');
+    videosFrame.innerHTML = creatorEmbedHtml(handle);
+
+    loadEmbedScriptOnce();
+  }
+
+  function setActiveTab(name){
+    tabButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === name);
+    });
+    panelProfile.style.display = name === 'profile' ? '' : 'none';
+    panelVideos.style.display  = name === 'videos'  ? '' : 'none';
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+  });
+
+  profileForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const handle = extractHandle(handleInput.value);
+    if (!handle){
+      profileError.style.display = 'block';
+      return;
+    }
+    profileError.style.display = 'none';
+    renderProfile(handle);
+  });
+})();
+</script>
+
+</body>
+</html>
