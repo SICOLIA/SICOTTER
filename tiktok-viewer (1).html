@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DikTok - Video Stream</title>
+<title>DikTok - Stream Generator</title>
 <style>
   :root{
     --bg:#0E0E10;
@@ -30,7 +30,7 @@
   header h1{
     font-size:32px;
     font-weight:800;
-    margin:0 0 20px;
+    margin:0 0 10px;
     text-align:center;
   }
   header h1 span{
@@ -39,6 +39,12 @@
     background-clip:text;
     color:transparent;
   }
+  .description {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 30px;
+  }
   .panel{
     background:var(--bg-soft);
     border:1px solid var(--line);
@@ -46,47 +52,43 @@
     padding:20px;
     margin-bottom:30px;
   }
-  .field-row{
-    display:flex;
-    gap:10px;
-  }
-  .at-input{
-    flex:1;
+  textarea{
+    width:100%;
+    height:120px;
     background:var(--bg);
     border:1px solid var(--line);
     border-radius:10px;
-    padding:0 14px;
-    display:flex;
-    align-items:center;
-  }
-  .at-input input{
-    width:100%;
-    background:transparent;
-    border:none;
-    outline:none;
+    padding:12px;
     color:var(--text);
-    font-size:16px;
-    padding:12px 0;
+    font-size:13px;
+    resize:vertical;
+    outline:none;
+    margin-bottom:15px;
+    font-family: monospace;
+  }
+  textarea::placeholder{
+    color:var(--text-dim);
   }
   button{
+    width:100%;
     border:none;
     border-radius:10px;
-    padding:0 24px;
-    font-size:15px;
+    padding:14px;
+    font-size:16px;
     font-weight:700;
+    color:#fff;
     background:linear-gradient(90deg,var(--cyan),var(--pink));
     cursor:pointer;
     transition: opacity .15s;
   }
   button:hover{opacity:.9;}
-  .error{color:var(--pink); font-size:13px; margin:10px 0 0; display:none;}
-  .loading{text-align:center; color:var(--text-dim); display:none; margin:20px 0;}
+  .info-msg{color:var(--cyan); font-size:14px; margin:10px 0 0; display:none; text-align:center; font-weight: bold;}
   
-  /* 動画ストリームの配置スタック */
+  /* 動画ストリームの配置 */
   .video-stream{
     display:flex;
     flex-direction:column;
-    gap:30px; /* 動画と動画の間の余白 */
+    gap:35px;
     align-items:center;
   }
   .video-card{
@@ -99,10 +101,7 @@
     padding:10px;
     display:flex;
     justify-content:center;
-  }
-  @media (max-width:480px){
-    .field-row{flex-direction:column;}
-    button{padding:12px;}
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
 </style>
 </head>
@@ -111,39 +110,28 @@
 <div class="wrap">
   <header>
     <h1>Dik<span>Tok Stream</span></h1>
+    <div class="description">拡張機能・サーバー不要。ソースを1秒コピペするだけで動画ストリーム化</div>
   </header>
 
   <div class="panel">
-    <form id="search-form">
-      <div class="field-row">
-        <div class="at-input">
-          <input type="text" id="handle-input" placeholder="アカウント名を入力 (例: @username)" autocomplete="off">
-        </div>
-        <button type="submit">動画を読み込む</button>
-      </div>
-      <p class="error" id="error-msg">動画の取得に失敗しました。アカウント名を確認してください。</p>
-    </form>
+    <textarea id="source-input" placeholder="【使い方】&#10;1. TikTokで見たい人のプロフィールページを開く&#10;2. 画面の空白部分を右クリック ➔「ページのソースを表示」(または Ctrl+U)&#10;3. 開いたソース画面を全選択(Ctrl+A) して コピー(Ctrl+C)&#10;4. ここに 貼り付け(Ctrl+V) して下のボタンを押す"></textarea>
+    <button id="generate-btn">🎬 ストリーム再生を生成する</button>
+    <p class="info-msg" id="info-msg"></p>
   </div>
 
-  <div class="loading" id="loading-view">動画を取得中... (数十秒かかる場合があります)</div>
   <div class="video-stream" id="video-stream"></div>
 </div>
 
 <script>
 (function(){
-  // ⚡️ここにあなたのCloudflare WorkersのURLを貼り付けてください⚡️
-  const WORKERS_URL = 'https://morning-lab-61b0.powerup4071.workers.dev/'; 
-
-  const form = document.getElementById('search-form');
-  const input = document.getElementById('handle-input');
-  const errorMsg = document.getElementById('error-msg');
-  const loading = document.getElementById('loading-view');
+  const btn = document.getElementById('generate-btn');
+  const input = document.getElementById('source-input');
   const stream = document.getElementById('video-stream');
+  const infoMsg = document.getElementById('info-msg');
 
-  // TikTokの埋め込みJSを読み込む関数
   function loadTikTokScript() {
     const existing = document.getElementById('tiktok-embed-script');
-    if (existing) existing.remove(); // 古いスクリプトを削除して再読み込み
+    if (existing) existing.remove();
 
     const s = document.createElement('script');
     s.id = 'tiktok-embed-script';
@@ -152,44 +140,63 @@
     document.body.appendChild(s);
   }
 
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const handle = input.value.trim().replace('@', '');
-    if(!handle) return;
+  btn.addEventListener('click', function(){
+    const text = input.value;
+    if(!text.trim()) return;
 
-    errorMsg.style.display = 'none';
-    loading.style.display = 'block';
-    stream.innerHTML = ''; // 画面をクリア
+    // ソースコードのジャングルから「/video/19桁の動画ID」をすべて自動抽出する
+    const regex = /\/video\/(\d+)/g;
+    const videoIds = [];
+    let match;
 
-    try {
-      // Cloudflare Workers経由で動画IDを自動取得
-      const res = await fetch(`${WORKERS_URL}?handle=${handle}`);
-      const data = await res.json();
-
-      if (!data.success || !data.videoIds || data.videoIds.length === 0) {
-        throw new Error();
+    while ((match = regex.exec(text)) !== null) {
+      if (!videoIds.includes(match[1])) {
+        videoIds.push(match[1]);
       }
-
-      // 取得した動画IDを元に、最初から再生可能な公式プレイヤーを縦に並べる
-      data.videoIds.forEach(id => {
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-          <blockquote class="tiktok-embed" data-video-id="${id}" style="max-width: 540px; min-width: 325px; margin:0;">
-            <section></section>
-          </blockquote>
-        `;
-        stream.appendChild(card);
-      });
-
-      // TikTokの埋め込みスクリプトを発火させてプレイヤー化する
-      loadTikTokScript();
-
-    } catch (err) {
-      errorMsg.style.display = 'block';
-    } finally {
-      loading.style.display = 'none';
     }
+
+    // 万が一URLではなく、動画IDや共有テキストがそのまま貼られた場合も想定して数字単体を補完
+    if (videoIds.length === 0) {
+      const idRegex = /\b\d{18,20}\b/g;
+      let idMatch;
+      while ((idMatch = idRegex.exec(text)) !== null) {
+        if (!videoIds.includes(idMatch[0])) {
+          videoIds.push(idMatch[0]);
+        }
+      }
+    }
+
+    stream.innerHTML = ''; // 前の動画をクリア
+
+    if (videoIds.length === 0) {
+      infoMsg.style.color = '#FE2C55';
+      infoMsg.innerText = '動画データが見つかりませんでした。貼り付けたデータを確認してください。';
+      infoMsg.style.display = 'block';
+      return;
+    }
+
+    // ユーザーに成功数を通知
+    infoMsg.style.color = 'var(--cyan)';
+    infoMsg.innerText = `🎉 最新の動画を ${videoIds.length} 本読み込みました！`;
+    infoMsg.style.display = 'block';
+
+    // 抽出した動画IDの数だけプレイヤーを生成して縦に並べる
+    videoIds.forEach(id => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <blockquote class="tiktok-embed" data-video-id="${id}" style="max-width: 540px; min-width: 325px; margin:0;">
+          <section></section>
+        </blockquote>
+      `;
+      stream.appendChild(card);
+    });
+
+    // 貼り付け欄を空にして画面をスッキリさせる
+    input.value = '';
+
+    // TikTok公式スクリプトを実行してプレイヤー化
+    loadTikTokScript();
   });
 })();
 </script>
