@@ -88,20 +88,24 @@
   .video-stream{
     display:flex;
     flex-direction:column;
-    gap:35px;
+    gap:40px;
     align-items:center;
   }
   .video-card{
     width:100%;
-    max-width:540px;
+    max-width:350px; /* スマホ縦型サイズに最適化 */
     background:var(--bg-soft);
     border:1px solid var(--line);
     border-radius:16px;
     overflow:hidden;
-    padding:10px;
     display:flex;
     justify-content:center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .video-card iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
   }
 </style>
 </head>
@@ -110,7 +114,7 @@
 <div class="wrap">
   <header>
     <h1>Dik<span>Tok Stream</span></h1>
-    <div class="description">拡張機能・サーバー不要。ソースを1秒コピペするだけで動画ストリーム化</div>
+    <div class="description">エラー対策版：ソースをコピペするだけで動画ストリーム化</div>
   </header>
 
   <div class="panel">
@@ -129,22 +133,11 @@
   const stream = document.getElementById('video-stream');
   const infoMsg = document.getElementById('info-msg');
 
-  function loadTikTokScript() {
-    const existing = document.getElementById('tiktok-embed-script');
-    if (existing) existing.remove();
-
-    const s = document.createElement('script');
-    s.id = 'tiktok-embed-script';
-    s.async = true;
-    s.src = 'https://www.tiktok.com/embed.js';
-    document.body.appendChild(s);
-  }
-
   btn.addEventListener('click', function(){
     const text = input.value;
     if(!text.trim()) return;
 
-    // ソースコードのジャングルから「/video/19桁の動画ID」をすべて自動抽出する
+    // ソースコードから動画IDを抽出
     const regex = /\/video\/(\d+)/g;
     const videoIds = [];
     let match;
@@ -155,7 +148,6 @@
       }
     }
 
-    // 万が一URLではなく、動画IDや共有テキストがそのまま貼られた場合も想定して数字単体を補完
     if (videoIds.length === 0) {
       const idRegex = /\b\d{18,20}\b/g;
       let idMatch;
@@ -166,37 +158,37 @@
       }
     }
 
-    stream.innerHTML = ''; // 前の動画をクリア
+    stream.innerHTML = ''; 
 
     if (videoIds.length === 0) {
       infoMsg.style.color = '#FE2C55';
-      infoMsg.innerText = '動画データが見つかりませんでした。貼り付けたデータを確認してください。';
+      infoMsg.innerText = '動画データが見つかりませんでした。';
       infoMsg.style.display = 'block';
       return;
     }
 
-    // ユーザーに成功数を通知
     infoMsg.style.color = 'var(--cyan)';
-    infoMsg.innerText = `🎉 最新の動画を ${videoIds.length} 本読み込みました！`;
+    infoMsg.innerText = `🎉 最新の動画を ${videoIds.length} 本読み込みました！下にスクロールしてください。`;
     infoMsg.style.display = 'block';
 
-    // 抽出した動画IDの数だけプレイヤーを生成して縦に並べる
+    // 抽出した動画IDを使って、公式スクリプトに頼らず「直接iframe」を生成
     videoIds.forEach(id => {
       const card = document.createElement('div');
       card.className = 'video-card';
+      
+      // ポイント1： allow属性でbotチェッカー(mssdk)のセンサーエラーを回避
+      // ポイント2： loading="lazy" で画面にスクロールしてきた時だけ読み込む（403ブロック回避）
       card.innerHTML = `
-        <blockquote class="tiktok-embed" data-video-id="${id}" style="max-width: 540px; min-width: 325px; margin:0;">
-          <section></section>
-        </blockquote>
+        <iframe src="https://www.tiktok.com/embed/v2/${id}?lang=ja-JP" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen 
+                loading="lazy">
+        </iframe>
       `;
       stream.appendChild(card);
     });
 
-    // 貼り付け欄を空にして画面をスッキリさせる
     input.value = '';
-
-    // TikTok公式スクリプトを実行してプレイヤー化
-    loadTikTokScript();
   });
 })();
 </script>
