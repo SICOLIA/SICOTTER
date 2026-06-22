@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DikTok</title>
+<title>DikTok - Video Stream</title>
 <style>
   :root{
     --bg:#0E0E10;
@@ -14,310 +14,137 @@
     --pink:#FE2C55;
     --cyan:#25F4EE;
   }
-
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
   body{
     background:var(--bg);
     color:var(--text);
-    font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+    font-family:-apple-system,"Hiragino Sans",sans-serif;
+    margin:0; padding:0;
     min-height:100vh;
   }
-
   .wrap{
-    max-width:880px;
+    max-width:640px;
     margin:0 auto;
-    padding:56px 20px 80px;
+    padding:40px 20px 80px;
   }
-
-  /* ---- header ---- */
-  header{
-    margin-bottom:40px;
-  }
-  .eyebrow{
-    font-size:12px;
-    letter-spacing:.16em;
-    color:var(--text-dim);
-    text-transform:uppercase;
-    margin:0 0 10px;
-  }
-  h1{
-    font-size:34px;
+  header h1{
+    font-size:32px;
     font-weight:800;
-    letter-spacing:-0.01em;
-    margin:0 0 8px;
-    line-height:1.15;
+    margin:0 0 20px;
+    text-align:center;
   }
-  h1 span{
+  header h1 span{
     background:linear-gradient(90deg,var(--cyan),var(--pink));
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
   }
-  .lead{
-    color:var(--text-dim);
-    font-size:15px;
-    margin:0;
-    max-width:520px;
-    line-height:1.6;
-  }
-
-  /* ---- form ---- */
   .panel{
     background:var(--bg-soft);
     border:1px solid var(--line);
     border-radius:14px;
-    padding:24px;
-    margin-bottom:28px;
+    padding:20px;
+    margin-bottom:30px;
   }
-  .panel h2{
-    font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:.1em;
-    color:var(--text-dim);
-    margin:0 0 16px;
-    font-weight:700;
-  }
-
   .field-row{
     display:flex;
     gap:10px;
   }
   .at-input{
-    position:relative;
     flex:1;
-    display:flex;
-    align-items:center;
     background:var(--bg);
     border:1px solid var(--line);
     border-radius:10px;
     padding:0 14px;
-    transition:box-shadow .2s, border-color .2s;
-  }
-  .at-input .at{
-    color:var(--text-dim);
-    font-weight:700;
-    margin-right:2px;
+    display:flex;
+    align-items:center;
   }
   .at-input input{
-    flex:1;
+    width:100%;
     background:transparent;
     border:none;
     outline:none;
     color:var(--text);
     font-size:16px;
-    padding:13px 0;
+    padding:12px 0;
   }
-  .at-input input::placeholder{color:#5b5b60;}
-
-  .at-input:focus-within{
-    border-color:transparent;
-    box-shadow:
-      0 0 0 1px var(--cyan),
-      0 0 0 3px rgba(37,244,238,0.15),
-      4px 0 14px -4px var(--pink);
-  }
-
   button{
     border:none;
     border-radius:10px;
-    padding:0 22px;
+    padding:0 24px;
     font-size:15px;
     font-weight:700;
-    color:#0E0E10;
     background:linear-gradient(90deg,var(--cyan),var(--pink));
     cursor:pointer;
-    transition:transform .15s, opacity .15s;
+    transition: opacity .15s;
   }
-  button:hover{opacity:.92;}
-  button:active{transform:scale(.97);}
-
-  .hint{
-    font-size:12.5px;
-    color:var(--text-dim);
-    margin:10px 2px 0;
-  }
-  .error{
-    font-size:13px;
-    color:var(--pink);
-    margin:10px 2px 0;
-    display:none;
-  }
-
-  /* ---- profile section ---- */
-  .profile-shell{
-    margin-bottom:8px;
-  }
-  .profile-meta{
+  button:hover{opacity:.9;}
+  .error{color:var(--pink); font-size:13px; margin:10px 0 0; display:none;}
+  .loading{text-align:center; color:var(--text-dim); display:none; margin:20px 0;}
+  
+  /* 動画ストリームの配置スタック */
+  .video-stream{
     display:flex;
+    flex-direction:column;
+    gap:30px; /* 動画と動画の間の余白 */
     align-items:center;
-    margin-bottom:18px;
   }
-  .profile-meta .handle{
-    font-size:18px;
-    font-weight:800;
-  }
-  .profile-meta .handle .at{color:var(--text-dim);font-weight:600;}
-
-  .tabs{
-    display:flex;
-    gap:4px;
-    margin-bottom:16px;
-    border-bottom:1px solid var(--line);
-  }
-  .tab{
-    background:transparent;
-    color:var(--text-dim);
-    border:none;
-    border-radius:0;
-    padding:10px 4px;
-    margin-right:20px;
-    font-size:14px;
-    font-weight:700;
-    cursor:pointer;
-    position:relative;
-    top:1px;
-    border-bottom:2px solid transparent;
-  }
-  .tab.active{
-    color:var(--text);
-    border-bottom:2px solid var(--pink);
-  }
-  .tab:hover:not(.active){color:var(--text);}
-
-  .embed-frame{
+  .video-card{
+    width:100%;
+    max-width:540px;
     background:var(--bg-soft);
     border:1px solid var(--line);
-    border-radius:14px;
+    border-radius:16px;
     overflow:hidden;
-    min-height:120px;
+    padding:10px;
     display:flex;
-    align-items:center;
     justify-content:center;
   }
-  .embed-frame.empty{
-    padding:40px 20px;
-    color:var(--text-dim);
-    font-size:14px;
-    text-align:center;
-  }
-
-  /* TikTok embed.js produces a blockquote that becomes an iframe.
-     Force it to fill width nicely. */
-  .embed-frame .tiktok-embed{
-    margin:0 auto !important;
-    width:100% !important;
-    max-width:720px !important;
-  }
-
-  /* "videos" tab reuses the same creator-embed iframe. TikTok's
-     creator embed already lists the account's recent videos below
-     the bio, so we just give the frame enough height to show them;
-     visitors can scroll within the embed itself. */
-  .embed-frame.videos-focus{
-    min-height:640px;
-    align-items:flex-start;
-  }
-
-  footer{
-    margin-top:60px;
-    color:#5b5b60;
-    font-size:12px;
-    text-align:center;
-  }
-
-  @media (prefers-reduced-motion:reduce){
-    *{transition:none !important;}
-  }
-
-  @media (max-width:520px){
-    h1{font-size:26px;}
+  @media (max-width:480px){
     .field-row{flex-direction:column;}
-    button{padding:13px;}
+    button{padding:12px;}
   }
 </style>
 </head>
 <body>
 
 <div class="wrap">
-
   <header>
-    <p class="eyebrow">TikTok Local Viewer</p>
-    <h1>Dik<span>Tok</span></h1>
-    <p class="lead">アカウント名（@から始まるユーザー名）を入力すると、プロフィールと最新動画を見ることができます。</p>
+    <h1>Dik<span>Tok Stream</span></h1>
   </header>
 
   <div class="panel">
-    <h2>アカウントを表示</h2>
-    <form id="profile-form">
+    <form id="search-form">
       <div class="field-row">
         <div class="at-input">
-          <span class="at">@</span>
-          <input type="text" id="handle-input" placeholder="testA" autocomplete="off" inputmode="latin">
+          <input type="text" id="handle-input" placeholder="アカウント名を入力 (例: @username)" autocomplete="off">
         </div>
-        <button type="submit">表示する</button>
+        <button type="submit">動画を読み込む</button>
       </div>
-      <p class="error" id="profile-error">アカウント名を入力してください。</p>
+      <p class="error" id="error-msg">動画の取得に失敗しました。アカウント名を確認してください。</p>
     </form>
   </div>
 
-  <div class="profile-shell">
-    <div class="profile-meta" id="profile-meta" style="display:none;">
-      <div class="handle"><span class="at">@</span><span id="meta-handle"></span></div>
-    </div>
-
-    <div class="tabs" id="tabs" style="display:none;">
-      <button type="button" class="tab active" data-tab="profile">プロフィール</button>
-      <button type="button" class="tab" data-tab="videos">動画</button>
-    </div>
-
-    <div class="tab-panel" id="panel-profile">
-      <div class="embed-frame empty" id="profile-frame">
-        まだアカウントが指定されていません。上の入力欄に @アカウント名 を入れて「表示する」を押してください。
-      </div>
-    </div>
-
-    <div class="tab-panel" id="panel-videos" style="display:none;">
-      <div class="embed-frame empty" id="videos-frame">
-        アカウントを表示すると、ここにそのアカウントの動画一覧が表示されます（枠内でスクロールできます）。
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    TikTok公式の埋め込み（oEmbed / embed.js）を利用しています。非公開アカウントや年齢制限のあるアカウント・動画は表示できません。
-  </footer>
-
+  <div class="loading" id="loading-view">動画を取得中... (数十秒かかる場合があります)</div>
+  <div class="video-stream" id="video-stream"></div>
 </div>
 
 <script>
 (function(){
-  const profileForm   = document.getElementById('profile-form');
-  const handleInput   = document.getElementById('handle-input');
-  const profileError  = document.getElementById('profile-error');
-  const profileFrame  = document.getElementById('profile-frame');
-  const videosFrame   = document.getElementById('videos-frame');
-  const profileMeta   = document.getElementById('profile-meta');
-  const metaHandle    = document.getElementById('meta-handle');
-  const tabs          = document.getElementById('tabs');
-  const tabButtons    = tabs.querySelectorAll('.tab');
-  const panelProfile  = document.getElementById('panel-profile');
-  const panelVideos   = document.getElementById('panel-videos');
+  // ⚡️ここにあなたのCloudflare WorkersのURLを貼り付けてください⚡️
+  const WORKERS_URL = 'https://morning-lab-61b0.powerup4071.workers.dev/'; 
 
-  // TikTok's embed.js scans the DOM once on load, then again whenever
-  // window.tiktokEmbedLoad() is called (it's exposed by their script
-  // for late-inserted blockquotes).
-  function reloadTiktokEmbeds(){
-    if (window.tiktokEmbedLoad) {
-      try { window.tiktokEmbedLoad(); } catch(e) { /* no-op */ }
-    }
-  }
+  const form = document.getElementById('search-form');
+  const input = document.getElementById('handle-input');
+  const errorMsg = document.getElementById('error-msg');
+  const loading = document.getElementById('loading-view');
+  const stream = document.getElementById('video-stream');
 
-  function loadEmbedScriptOnce(){
-    if (document.getElementById('tiktok-embed-script')) {
-      reloadTiktokEmbeds();
-      return;
-    }
+  // TikTokの埋め込みJSを読み込む関数
+  function loadTikTokScript() {
+    const existing = document.getElementById('tiktok-embed-script');
+    if (existing) existing.remove(); // 古いスクリプトを削除して再読み込み
+
     const s = document.createElement('script');
     s.id = 'tiktok-embed-script';
     s.async = true;
@@ -325,66 +152,44 @@
     document.body.appendChild(s);
   }
 
-  // Extracts a clean handle (no @, no url) from free-form input.
-  function extractHandle(raw){
-    if (!raw) return null;
-    let v = raw.trim();
-    // full URL like https://www.tiktok.com/@testA or with trailing path
-    const urlMatch = v.match(/tiktok\.com\/@([a-zA-Z0-9_.]+)/i);
-    if (urlMatch) return urlMatch[1];
-    // plain "@testA" or "testA"
-    v = v.replace(/^@/, '');
-    if (/^[a-zA-Z0-9_.]{1,24}$/.test(v)) return v;
-    return null;
-  }
-
-  function creatorEmbedHtml(handle){
-    return '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@' + handle + '" ' +
-      'data-unique-id="' + handle + '" data-embed-type="creator" ' +
-      'style="max-width: 720px; min-width: 288px;">' +
-      '<section></section>' +
-      '</blockquote>';
-  }
-
-  function renderProfile(handle){
-    profileMeta.style.display = 'flex';
-    metaHandle.textContent = handle;
-    tabs.style.display = 'flex';
-
-    // Profile tab: full creator embed (bio + recent videos).
-    profileFrame.classList.remove('empty');
-    profileFrame.innerHTML = creatorEmbedHtml(handle);
-
-    // Videos tab: same creator embed (TikTok's creator embed already
-    // includes the account's recent videos below the bio).
-    videosFrame.classList.remove('empty');
-    videosFrame.classList.add('videos-focus');
-    videosFrame.innerHTML = creatorEmbedHtml(handle);
-
-    loadEmbedScriptOnce();
-  }
-
-  function setActiveTab(name){
-    tabButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === name);
-    });
-    panelProfile.style.display = name === 'profile' ? '' : 'none';
-    panelVideos.style.display  = name === 'videos'  ? '' : 'none';
-  }
-
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
-  });
-
-  profileForm.addEventListener('submit', function(e){
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
-    const handle = extractHandle(handleInput.value);
-    if (!handle){
-      profileError.style.display = 'block';
-      return;
+    const handle = input.value.trim().replace('@', '');
+    if(!handle) return;
+
+    errorMsg.style.display = 'none';
+    loading.style.display = 'block';
+    stream.innerHTML = ''; // 画面をクリア
+
+    try {
+      // Cloudflare Workers経由で動画IDを自動取得
+      const res = await fetch(`${WORKERS_URL}?handle=${handle}`);
+      const data = await res.json();
+
+      if (!data.success || !data.videoIds || data.videoIds.length === 0) {
+        throw new Error();
+      }
+
+      // 取得した動画IDを元に、最初から再生可能な公式プレイヤーを縦に並べる
+      data.videoIds.forEach(id => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <blockquote class="tiktok-embed" data-video-id="${id}" style="max-width: 540px; min-width: 325px; margin:0;">
+            <section></section>
+          </blockquote>
+        `;
+        stream.appendChild(card);
+      });
+
+      // TikTokの埋め込みスクリプトを発火させてプレイヤー化する
+      loadTikTokScript();
+
+    } catch (err) {
+      errorMsg.style.display = 'block';
+    } finally {
+      loading.style.display = 'none';
     }
-    profileError.style.display = 'none';
-    renderProfile(handle);
   });
 })();
 </script>
